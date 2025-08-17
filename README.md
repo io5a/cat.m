@@ -1,6 +1,6 @@
 CAT.M is a Computer Aided Thermal Managment solution made for your room that helps you conserve energy, dress for the weather and look at temperature graphs.
 
-**FEATURES**
+## **Features**
 - Built with the Open Meteo API, meaning no need for an API key
 - Alerts the user when the temperature inside is hotter than the temperature outside, prompting the user to turn off the AC and open a window, reducing the unneccesarry use of electricity in the summer
 - Built in clock with a connection to a NTP server for accurate time
@@ -8,16 +8,16 @@ CAT.M is a Computer Aided Thermal Managment solution made for your room that hel
 - Charts to show how will the weather evolve over the day
 
 
-**LIST OF MATERIALS**
+## **List of materials**
 - The Adafruit QT Py ESP32-S2 WiFi Dev Board (https://www.adafruit.com/product/5325)
 - A cheap no name SSD1306 OLED screen
 - A button
 - A random BMP-280 sensor
 
 
-**BRINGING IT TO LIFE**
+## **Bringing it to life**
 
-This is the section where I talk about how the idea of CAT.M came to be, how I did the design and the building process.'
+This is the section where I talk about how the idea of CAT.M came to be, how I did the design and the building process.
 
 //add how it came to be
 
