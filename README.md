@@ -5,7 +5,7 @@ CAT.M is a Computer Aided Thermal Managment solution made for your room that hel
 - Alerts the user when the temperature inside is hotter than the temperature outside, prompting the user to turn off the AC and open a window, reducing the unneccesarry use of electricity in the summer
 - Built in clock with a connection to a NTP server for accurate time
 - Recommend to the user what to wear based on the current and future weather
-- Charts to show how will the weather evolve over the next 24 hours
+- Charts to show how will the weather evolve over the day
 
 
 **LIST OF MATERIALS**
@@ -17,7 +17,9 @@ CAT.M is a Computer Aided Thermal Managment solution made for your room that hel
 
 **BRINGING IT TO LIFE**
 
-This is the section where I talk about how the idea of CAT.M came to be, how I did the design and the building process.
+This is the section where I talk about how the idea of CAT.M came to be, how I did the design and the building process.'
+
+//add how it came to be
 
 After finishing the draft code (just querying the api and printing the info out to the console for now), I am stuck waiting for my screen and sensor to arrive. So I start making the pixel art. Obviously, given the name, the mascot HAS to be a cat. After a bit of thinking I decide a lucky cat would be perfect for this, because it will easy to animate/dress later down the road.
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/bd8e2e75-d42c-4518-9919-f0d471600d87" />
@@ -27,4 +29,10 @@ Next up, choosing what information to be displayed and where. I do plan on havin
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/3afefc77-aafb-4699-bcd3-4852f5107726" />
 <sup>First draft of the home screen</sup>
 
+Moving onto the next screen, which is the harder one to make due to the size limitations. The idea for this screen is to have a graph of the daily temperatures from outside, with the end goal to setup some kind of system to display other graphs, such as precipitation probabilty over the day. The first hurdle I encountered is the size of the screen. The minimum size of, for example, the number 20, is 7 pixels wide and 5 pixels high, which would not be a problem if not for the fact that the space I can work with is 120 pixel in width. Some quick math reveals that only 17 numbers with those dimension can be fitted on the screen. The issue is that in order for the graph to be accurate you need the numbers to be spaced out in the same way, so as not to move a data point closer to another and suggest an unrealistically steeper graph. The decision I am now facing is: do I buy a bigger screen or accept the inaccuracies of the missaligned graph. In the end I choose to keep the inaccuracies, because a new screen would entail a complete redesign of the home page, which would be tedious. 
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/93c2e7fe-e373-4d1c-9e4d-c57258b81ade" />
+However, even with the abysmal spacing, the numbers still did not fit. The only other solutions that I can think of is either split the screen in half or eat my pride and buy a bigger screen and redo all my design work. Having already spent quite a bit on this project, I believe the best choice is the split screen route.
+After a bit of cramming I was able however to get everything to fit, although with BARELY enough space.
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/2cde13e5-dc68-414c-90e2-11d94c1039ef" />
 
+I contemplated wether or not to bake the left side of the graph (the temps) into the background, but I realised that if I want to use this in winter I would have to have a range of about 35 to -15 degrees, which would not fit at all. And so what I will probably do is, based on the input array, get the highest point, add a few degrees for clarity's sake, and go down from there. While there are some design stuff left to do (mainly animations and some other miscellaneous pages), I want to get a prototype working, and for that I'm going to use a simulator, more specifically [wokwi.com](wokwi.com).
