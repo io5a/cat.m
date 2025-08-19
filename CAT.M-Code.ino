@@ -17,14 +17,17 @@ const char* ssid = "Wokwi-GUEST";
 //const char* password = "CENSORED";
 const char* weatherserver = "http://api.open-meteo.com/v1/forecast?latitude=47.1667&longitude=27.6&daily=temperature_2m_min,temperature_2m_max,sunset,sunrise,precipitation_hours&hourly=temperature_2m,precipitation,precipitation_probability&current=temperature_2m&timezone=auto&forecast_days=1";
 unsigned long lastTime = 0;
-//unsigned long timerDelay = 600000; //10 min
-unsigned long timerDelay = 5000; //5 sec
+unsigned long timerDelay = 600000; //10 min
+//unsigned long timerDelay = 5000; //5 sec
 
 int ChooseNr; // the number that signifies what data i want to retrieve
-double MainNr;
+int MainNr;
 String MainString;
 double MainData[24]; // mix used array for hourly 
 
+int CurrHour;
+
+bool start=true;
 
 String weather;
 float weatherArr[3];
@@ -233,6 +236,27 @@ void DisplayCat(int x,int y){
   display1.drawBitmap(x, y, cat_bitmap, 47, 59, SSD1306_WHITE);
 }
 
+void DisplayText(int Size,int x,int y,String Text){
+    display1.setTextColor(SSD1306_WHITE);
+
+    display1.setTextSize(Size);
+    display1.setCursor(x, y);
+    display1.print(Text);
+}
+
+void AllDesigns(){
+    DisplayClock(7,7);
+    DisplayInTherm(7,19);
+    DisplayOutTherm(7,31);
+    DisplayMoon(7,43);
+    DisplaySun(7,55);
+    DisplayCloud(102,5);
+    NextHourTherm(102,17);
+    DisplayCATM(89,44);
+    DisplayCat(47,3);
+
+}
+
 
 void setup(){
 
@@ -256,26 +280,20 @@ void setup(){
   // END CONNECT WIFI
 
   // Initialize single display
-  Wire.begin();  // to remove the args, just for the simulation
+  Wire.begin(33, 35);  // to remove the args, just for the simulation
   delay(200);
   
   // Initialize Display (Speed/GPS switchable)
   Serial.println("Initializing Display at 0x3C...");
   if (display1.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
     Serial.println("✓ Display OK");
-    display1.clearDisplay();
-    display1.setTextColor(SSD1306_WHITE);
-    DisplayClock(7,7);
-    DisplayInTherm(7,19);
-    DisplayOutTherm(7,31);
-    DisplayMoon(7,43);
-    DisplaySun(7,55);
-    DisplayCloud(96,5);
-    NextHourTherm(96,17);
-    DisplayCATM(89,44);
-    DisplayCat(39,3);
-    display1.display();
-    display1.display();
+    //DisplayText(1,15,4,"10:00");
+    //DisplayText(1,15,16,"32C");
+    //DisplayText(1,15,28,"32C");
+    //DisplayText(1,15,40,"20:00");
+    //DisplayText(1,15,52,"30:00");
+    //DisplayText(1,110,4,"99%"); // max it out at 99, else it would not if on the display
+    //DisplayText(1,110,16,"33C");
     delay(2000);
   } else {
     Serial.println("✗ Display failed");
@@ -284,31 +302,71 @@ void setup(){
 
 void loop() {
   //Send an HTTP POST request every 10 minutes
-  if ((millis() - lastTime) > timerDelay) {
+  if ((millis() - lastTime) > timerDelay || start) {
     //Check WiFi connection status
     if(WiFi.status()== WL_CONNECTED){
+      display1.clearDisplay();
+      AllDesigns();
       weather = httpGETRequest(weatherserver);
-      parseWeather(weather,13,MainNr,MainString,MainData); // THE CHOOSENR IS BACKWARDS
-      Serial.println(MainNr);
+      //11 - timezone abrev
+      //12 - curr time
+      //22 - curr interval
+      //32 - curr temp
+      //42 - curr precip
+      //13 - hourly time
+      //23 - hourly temp
+      //33 - hourly precip
+      //43 - hourly precip prob
+      //14 - daily time
+      //24 - daily sunrise
+      //34 - daily sunset
+      
+      //Time(15 min intervals for now)
+      parseWeather(weather,12,MainNr,MainString,MainData); // THE CHOOSENR IS BACKWARDS
+      CurrHour=MainString.substring(0,2).toInt();
+      DisplayText(1,15,4,MainString); //maybe use actual time, this is only the time for the temps which is not intuitive
+      //Out Temp
+      parseWeather(weather,32,MainNr,MainString,MainData);
+      DisplayText(1,15,28,String(MainNr)+"C");
+      //Sunset
+      parseWeather(weather,34,MainNr,MainString,MainData);
+      DisplayText(1,15,40,MainString);
+      //Sunrise
+      parseWeather(weather,24,MainNr,MainString,MainData);
+      DisplayText(1,15,52,MainString);
+      //NextHour
+      parseWeather(weather,23,MainNr,MainString,MainData);
+      if(CurrHour+1>23) //this is a temp fix since i dont yet have the setup for the next day aka getting weekly
+        DisplayText(1,110,16,String(int(MainData[0]))+"C");
+      else
+        DisplayText(1,110,16,String(int(MainData[CurrHour+1]))+"C");
+      
+      //Precipitation L/m2
+      parseWeather(weather,42,MainNr,MainString,MainData);
+      DisplayText(1,110,4,String(MainNr)+"mm");
+
+      display1.display();
     }
     else {
       Serial.println("WiFi Disconnected");
     }
     lastTime = millis();
-
+    start=false;
 
   }
 }
 
-void parseWeather(String jsonString,int ChooseNr, double& ReturnNr, String& ReturnString,double date[]) {
+void parseWeather(String jsonString,int ChooseNr, int& ReturnNr, String& ReturnString,double date[]) {
   JSONVar root = JSON.parse(jsonString);
 
   if (JSON.typeof(root) == "undefined") {
     Serial.println("Parsing input failed!");
     return;
   }
+
+  // if json doesnt work, try it as an array
   if(ChooseNr%10==1){
-    String TimezoneAbrev = (const char*) root["timezone_abbreviation"];
+    String TimezoneAbrev = (const char*) root["timezone_abbreviation"][0];
     ReturnString=TimezoneAbrev;
     return;
   }
@@ -316,8 +374,8 @@ void parseWeather(String jsonString,int ChooseNr, double& ReturnNr, String& Retu
     ChooseNr/=10;
     if(ChooseNr%10==1){
       String time=(const char*) root["current"]["time"];
-      ReturnString=time;
-      Serial.println(time);
+      String timeOnly = time.substring(11, 16);
+      ReturnString=timeOnly;
       return;
     }
     else if(ChooseNr%10==2){
@@ -326,13 +384,13 @@ void parseWeather(String jsonString,int ChooseNr, double& ReturnNr, String& Retu
       return;
     }
     else if(ChooseNr%10==3){
-      double temper=double(root["current"]["temperature_2m"]);
+      int temper=int(root["current"]["temperature_2m"]);
       ReturnNr=temper;
       return;
     }
-    else{
-      String precip=(const char*) root["current"]["precipitation"];
-      ReturnString=precip;
+    else if(ChooseNr%10==4){
+      int precip=int(root["current"]["precipitation"]);
+      ReturnNr=precip;
       return;
     }
   }
@@ -351,6 +409,7 @@ void parseWeather(String jsonString,int ChooseNr, double& ReturnNr, String& Retu
         for(int i=0;i<=23;i++){
           date[i]=double(root["hourly"]["temperature_2m"][i]);
         }
+        return;
       }
       if(ChooseNr%10==3){
         //array percep
@@ -365,26 +424,27 @@ void parseWeather(String jsonString,int ChooseNr, double& ReturnNr, String& Retu
         }
       }
     }
-  else{
+  else if(ChooseNr%10==4){
     ChooseNr/=10;
     if(ChooseNr%10==1){
-      String time = (const char*) root["daily"]["time"];
+      String time = (const char*) root["daily"]["time"][0];
       ReturnString=time;
       return;
     }
     if(ChooseNr%10==2){
-      String sunrise = (const char*) root["daily"]["sunrise"];
-      ReturnString = sunrise;
+      String sunrise = (const char*) root["daily"]["sunrise"][0];
+      String sunriseTrunc = sunrise.substring(11, 16);
+      ReturnString=sunriseTrunc;
       return;
     }
     else{
-      String sunset = (const char*) root["daily"]["sunset"];
-      ReturnString= sunset;
+      String sunset = (const char*) root["daily"]["sunset"][0];
+      String sunsetTrunc = sunset.substring(11, 16);
+      ReturnString= sunsetTrunc;
       return;
     }
   }
 }
-
 
 String httpGETRequest(const char* serverName) {
   WiFiClient client;
