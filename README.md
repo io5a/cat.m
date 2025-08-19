@@ -39,3 +39,6 @@ I contemplated whether or not to bake the left side of the graph (the temps) int
 
 After a full day, I have the first bits of the ui done. What remains is to draw the cat and display the text. Because the cat is a complicated figure to draw with pixels and lines, I'm probably going to either write a python code that outputs the exact code to recreate it, or use a matrix to show 1s and 0s based on if the pixels are light up, and using that to display the cat.
 <img width="1916" height="999" alt="image" src="https://github.com/user-attachments/assets/dd819010-a898-4a32-90a9-bd051c274a0f" />
+
+I decided to go with the matrix approach, however quickly realised that i only needed an array. And so I used the tool [image2cpp](https://javl.github.io/image2cpp/) to convert my image into bits, which I then displayed using the .drawBitmap function. 
+<img width="1917" height="1000" alt="image" src="https://github.com/user-attachments/assets/6d54e658-2b92-4c08-849d-a6d703a836a6" />
