@@ -42,3 +42,6 @@ After a full day, I have the first bits of the ui done. What remains is to draw 
 
 I decided to go with the matrix approach, however quickly realised that i only needed an array. And so I used the tool [image2cpp](https://javl.github.io/image2cpp/) to convert my image into bits, which I then displayed using the .drawBitmap function. 
 <img width="1917" height="1000" alt="image" src="https://github.com/user-attachments/assets/6d54e658-2b92-4c08-849d-a6d703a836a6" />
+
+My display is here and that means I can finally test everything(not quite everything since I have not yet read the code for the sensor integration). After connecting everything on the breadboard and compiling the sketch, everything was functioning as expected! One unfortunate thing is that the display I order has this weird 2 color pattern which was not specified on the product page, but it doesnt affect the functionality that much, so for now its here to stay.
+![IMG-20250819-WA0001](https://github.com/user-attachments/assets/8c34e5bc-56b0-4df6-a7ae-3a07b78476be)
