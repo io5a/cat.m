@@ -46,3 +46,8 @@ I decided to go with the matrix approach, however quickly realised that i only n
 My display is here and that means I can finally test everything(not quite everything since I have not yet read the code for the sensor integration). After connecting everything on the breadboard and compiling the sketch, everything was functioning as expected! One unfortunate thing is that the display I order has this weird 2 color pattern which was not specified on the product page, but it doesnt affect the functionality that much, so for now its here to stay.
 ![IMG-20250819-WA0001-cropped 2](https://github.com/user-attachments/assets/b0b013f9-f7b2-4f58-a494-3ce9023fb977)
 
+The next step was to link the actual information from the api with the text displayed on the screen. This took slightly longer than expected due to multiple issues, mostly the data not being passed correctly through funtions, but also some minor adjustments to the position of the UI elements. Some current things that I want to fix are: the clock being only in increments of 15 due to me just using the api provided time, lack of viewing the forcasted weather in the future, the lack of animation, the sensor for the indoor temps not being setup and finally the system to alert the user to turn off their AC. This is quite a lot however, so I'm probably going to focus on designing the enclosure tomorrow. Here is a picture of the first "finished" prototype of CAT.M:
+![IMG_20250820_010721_364](https://github.com/user-attachments/assets/6e05bdc3-de8d-4f31-8c62-f6f9b5fd1719)
+
+
+
