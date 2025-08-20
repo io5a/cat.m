@@ -4,17 +4,21 @@
 #include <Wire.h>
 #include <Adafruit_SSD1306.h>
 #include <Adafruit_GFX.h>
+#include <Adafruit_BMP280.h>
 
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
 
+unsigned status;
+
+Adafruit_BMP280 bmp;
 Adafruit_SSD1306 display1(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
 #define I2C_ADDRESS 0x3C
 
-//const char* ssid = "CENSORED";
-const char* ssid = "Wokwi-GUEST";
-//const char* password = "CENSORED";
+const char* ssid = "CENSORED";
+//const char* ssid = "Wokwi-GUEST";
+const char* password = "CENSORED";
 const char* weatherserver = "http://api.open-meteo.com/v1/forecast?latitude=47.1667&longitude=27.6&daily=temperature_2m_min,temperature_2m_max,sunset,sunrise,precipitation_hours&hourly=temperature_2m,precipitation,precipitation_probability&current=temperature_2m&timezone=auto&forecast_days=1";
 unsigned long lastTime = 0;
 unsigned long timerDelay = 600000; //10 min
@@ -28,6 +32,7 @@ double MainData[24]; // mix used array for hourly
 int CurrHour;
 
 bool start=true;
+
 
 String weather;
 float weatherArr[3];
@@ -265,8 +270,8 @@ void setup(){
     delay(1000);
 
     WiFi.mode(WIFI_STA); //Optional
-    //WiFi.begin(ssid, password);
-    WiFi.begin(ssid);
+    WiFi.begin(ssid, password);
+    //WiFi.begin(ssid);
     Serial.println("\nConnecting");
 
     while(WiFi.status() != WL_CONNECTED){
@@ -280,12 +285,13 @@ void setup(){
   // END CONNECT WIFI
 
   // Initialize single display
-  Wire.begin(33, 35);  // to remove the args, just for the simulation
+  Wire.begin();  // to remove the args, just for the simulation
   delay(200);
   
   // Initialize Display (Speed/GPS switchable)
   Serial.println("Initializing Display at 0x3C...");
   if (display1.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
+    display1.clearDisplay();
     Serial.println("✓ Display OK");
     //DisplayText(1,15,4,"10:00");
     //DisplayText(1,15,16,"32C");
@@ -295,9 +301,18 @@ void setup(){
     //DisplayText(1,110,4,"99%"); // max it out at 99, else it would not if on the display
     //DisplayText(1,110,16,"33C");
     delay(2000);
-  } else {
+  } 
+  else {
     Serial.println("✗ Display failed");
   }
+    //Init bmp sensor;
+    status = bmp.begin(0x76);
+    bmp.setSampling(Adafruit_BMP280::MODE_NORMAL,     /* Operating Mode. */
+                  Adafruit_BMP280::SAMPLING_X2,     /* Temp. oversampling */
+                  Adafruit_BMP280::SAMPLING_X16,    /* Pressure oversampling */
+                  Adafruit_BMP280::FILTER_X16,      /* Filtering. */
+                  Adafruit_BMP280::STANDBY_MS_500);
+  
 }
 
 void loop() {
@@ -344,16 +359,21 @@ void loop() {
       //Precipitation L/m2
       parseWeather(weather,42,MainNr,MainString,MainData);
       DisplayText(1,110,4,String(MainNr)+"mm");
-
-      display1.display();
+      
     }
     else {
       Serial.println("WiFi Disconnected");
     }
     lastTime = millis();
     start=false;
-
   }
+    
+    //bmp sensor
+    ClearPortion(15,16,37,23);
+    DisplayText(1,15,16,String(bmp.readTemperature()-1).substring(0,2)+"C");
+    display1.display();
+    delay(500);
+
 }
 
 void parseWeather(String jsonString,int ChooseNr, int& ReturnNr, String& ReturnString,double date[]) {
@@ -468,4 +488,8 @@ String httpGETRequest(const char* serverName) {
   http.end();
 
   return payload;
+}
+
+void ClearPortion(int x1,int y1,int x2,int y2){
+  display1.fillRect(x1, y1, x2-x1, y2-y1, SSD1306_BLACK);
 }
