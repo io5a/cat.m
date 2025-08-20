@@ -49,5 +49,7 @@ My display is here and that means I can finally test everything(not quite everyt
 The next step was to link the actual information from the api with the text displayed on the screen. This took slightly longer than expected due to multiple issues, mostly the data not being passed correctly through funtions, but also some minor adjustments to the position of the UI elements. Some current things that I want to fix are: the clock being only in increments of 15 due to me just using the api provided time, lack of viewing the forcasted weather in the future, the lack of animation, the sensor for the indoor temps not being setup and finally the system to alert the user to turn off their AC. This is quite a lot however, so I'm probably going to focus on designing the enclosure tomorrow. Here is a picture of the first "finished" prototype of CAT.M:
 ![IMG_20250820_010721_364](https://github.com/user-attachments/assets/6e05bdc3-de8d-4f31-8c62-f6f9b5fd1719)
 
+I did not in fact design the enclosure as I got sucked into making the BME280 work, and so I just added the final piece of the puzzle as far as the homepage is concerned. Hopefully tomorrow I start doing some sketches for the enclosure, along with maybe putting a button to change the current page.
+
 
 
