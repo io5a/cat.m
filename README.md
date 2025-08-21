@@ -78,3 +78,5 @@ After reworking the code (separating each screen into its own function and creat
 Here are the two current screens (not impressive yet, but it’s coming together):  
 
 ![Two screens](https://github.com/user-attachments/assets/ab94f750-b49a-4168-9bc9-c0cb25862366)  
+
+I added the cat waving animation, it isn't my best work but it works. It is on a random timer (well pseudo-random but for our purposes random). One thing I would like to maybe improve is not using delay() because it blocks the whole program for about 1 second, however I haven't yet thought of a way to do it. Next up is the second screen, which is going to be how to dress based on the weather. 
