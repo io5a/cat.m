@@ -5,14 +5,20 @@
 #include <Adafruit_SSD1306.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_BMP280.h>
+#include <Adafruit_NeoPixel.h>
 
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
+#define NUMPIXELS        1
 
 unsigned status;
 
+int max_screen_nr = 2;
+int curr_screen = 1;
+
 Adafruit_BMP280 bmp;
 Adafruit_SSD1306 display1(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
+Adafruit_NeoPixel pixels(NUMPIXELS, PIN_NEOPIXEL, NEO_GRB + NEO_KHZ800);
 
 #define I2C_ADDRESS 0x3C
 
@@ -22,12 +28,16 @@ const char* password = "CENSORED";
 const char* weatherserver = "http://api.open-meteo.com/v1/forecast?latitude=47.1667&longitude=27.6&daily=temperature_2m_min,temperature_2m_max,sunset,sunrise,precipitation_hours&hourly=temperature_2m,precipitation,precipitation_probability&current=temperature_2m&timezone=auto&forecast_days=1";
 unsigned long lastTime = 0;
 unsigned long timerDelay = 600000; //10 min
+unsigned long debounceTime = 0;
+unsigned long debounceDelay = 100;
 //unsigned long timerDelay = 5000; //5 sec
 
 int ChooseNr; // the number that signifies what data i want to retrieve
 int MainNr;
 String MainString;
 double MainData[24]; // mix used array for hourly 
+
+int buttonValue;
 
 int CurrHour;
 
@@ -262,14 +272,62 @@ void AllDesigns(){
 
 }
 
+void FirstScreen(){
+  AllDesigns();
+  //Time(15 min intervals for now)
+  parseWeather(weather,12,MainNr,MainString,MainData); // THE CHOOSENR IS BACKWARDS
+  CurrHour=MainString.substring(0,2).toInt();
+  DisplayText(1,15,4,MainString); //maybe use actual time, this is only the time for the temps which is not intuitive
+  //Out Temp
+  parseWeather(weather,32,MainNr,MainString,MainData);
+  DisplayText(1,15,28,String(MainNr)+"C");
+  //Sunset
+  parseWeather(weather,34,MainNr,MainString,MainData);
+  DisplayText(1,15,40,MainString);
+  //Sunrise
+  parseWeather(weather,24,MainNr,MainString,MainData);
+  DisplayText(1,15,52,MainString);
+  //NextHour
+  parseWeather(weather,23,MainNr,MainString,MainData);
+  if(CurrHour+1>23) //this is a temp fix since i dont yet have the setup for the next day aka getting weekly
+    DisplayText(1,110,16,String(int(MainData[0]))+"C");
+  else
+    DisplayText(1,110,16,String(int(MainData[CurrHour+1]))+"C");
+  
+  //Precipitation L/m2
+  parseWeather(weather,42,MainNr,MainString,MainData);
+  DisplayText(1,110,4,String(MainNr)+"mm");
+
+  //ClearPortion(15,16,37,23);
+  //DisplayText(1,15,16,String(bmp.readTemperature()-1).substring(0,2)+"C");
+}
+
+void SecondScreen(){
+  DisplayText(1,60,30,"Test");
+}
+
+void ScreenChooser(int x){
+  if(x==1)
+    FirstScreen();
+  if(x==2)
+    SecondScreen();
+
+}
 
 void setup(){
-
+/*
+  #if defined(NEOPIXEL_POWER)
+    pinMode(NEOPIXEL_POWER, OUTPUT);
+    digitalWrite(NEOPIXEL_POWER, HIGH);
+  #endif
+  pixels.begin(); 
+  pixels.setBrightness(20);
+*/
   // START CONNECT WIFI
     Serial.begin(115200);
     delay(1000);
 
-    WiFi.mode(WIFI_STA); //Optional
+    WiFi.mode(WIFI_STA);
     WiFi.begin(ssid, password);
     //WiFi.begin(ssid);
     Serial.println("\nConnecting");
@@ -283,23 +341,15 @@ void setup(){
     Serial.print("Local ESP32 IP: ");
     Serial.println(WiFi.localIP());
   // END CONNECT WIFI
-
-  // Initialize single display
+  
   Wire.begin();  // to remove the args, just for the simulation
   delay(200);
   
-  // Initialize Display (Speed/GPS switchable)
+  // Initialize Display
   Serial.println("Initializing Display at 0x3C...");
   if (display1.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
     display1.clearDisplay();
     Serial.println("✓ Display OK");
-    //DisplayText(1,15,4,"10:00");
-    //DisplayText(1,15,16,"32C");
-    //DisplayText(1,15,28,"32C");
-    //DisplayText(1,15,40,"20:00");
-    //DisplayText(1,15,52,"30:00");
-    //DisplayText(1,110,4,"99%"); // max it out at 99, else it would not if on the display
-    //DisplayText(1,110,16,"33C");
     delay(2000);
   } 
   else {
@@ -312,68 +362,63 @@ void setup(){
                   Adafruit_BMP280::SAMPLING_X16,    /* Pressure oversampling */
                   Adafruit_BMP280::FILTER_X16,      /* Filtering. */
                   Adafruit_BMP280::STANDBY_MS_500);
-  
+    //button
+    pinMode(A0,INPUT_PULLUP);
+    
+    weather = httpGETRequest(weatherserver);
+    ScreenChooser(curr_screen);
+    display1.display();
 }
 
 void loop() {
-  //Send an HTTP POST request every 10 minutes
-  if ((millis() - lastTime) > timerDelay || start) {
-    //Check WiFi connection status
-    if(WiFi.status()== WL_CONNECTED){
-      display1.clearDisplay();
-      AllDesigns();
-      weather = httpGETRequest(weatherserver);
-      //11 - timezone abrev
-      //12 - curr time
-      //22 - curr interval
-      //32 - curr temp
-      //42 - curr precip
-      //13 - hourly time
-      //23 - hourly temp
-      //33 - hourly precip
-      //43 - hourly precip prob
-      //14 - daily time
-      //24 - daily sunrise
-      //34 - daily sunset
-      
-      //Time(15 min intervals for now)
-      parseWeather(weather,12,MainNr,MainString,MainData); // THE CHOOSENR IS BACKWARDS
-      CurrHour=MainString.substring(0,2).toInt();
-      DisplayText(1,15,4,MainString); //maybe use actual time, this is only the time for the temps which is not intuitive
-      //Out Temp
-      parseWeather(weather,32,MainNr,MainString,MainData);
-      DisplayText(1,15,28,String(MainNr)+"C");
-      //Sunset
-      parseWeather(weather,34,MainNr,MainString,MainData);
-      DisplayText(1,15,40,MainString);
-      //Sunrise
-      parseWeather(weather,24,MainNr,MainString,MainData);
-      DisplayText(1,15,52,MainString);
-      //NextHour
-      parseWeather(weather,23,MainNr,MainString,MainData);
-      if(CurrHour+1>23) //this is a temp fix since i dont yet have the setup for the next day aka getting weekly
-        DisplayText(1,110,16,String(int(MainData[0]))+"C");
-      else
-        DisplayText(1,110,16,String(int(MainData[CurrHour+1]))+"C");
-      
-      //Precipitation L/m2
-      parseWeather(weather,42,MainNr,MainString,MainData);
-      DisplayText(1,110,4,String(MainNr)+"mm");
-      
+  if(WiFi.status() == WL_CONNECTED){
+    if ((millis() - lastTime) > timerDelay) {
+        weather = httpGETRequest(weatherserver);
+        //11 - timezone abrev
+        //12 - curr time
+        //22 - curr interval
+        //32 - curr temp
+        //42 - curr precip
+        //13 - hourly time
+        //23 - hourly temp
+        //33 - hourly precip
+        //43 - hourly precip prob
+        //14 - daily time
+        //24 - daily sunrise
+        //34 - daily sunset
+        lastTime = millis();
     }
-    else {
-      Serial.println("WiFi Disconnected");
+    //next screen
+    buttonValue=digitalRead(A0);
+    if(buttonValue==LOW && (millis() - debounceTime) > debounceDelay){
+      curr_screen++;
+      debounceTime=millis();
     }
-    lastTime = millis();
-    start=false;
-  }
-    
-    //bmp sensor
-    ClearPortion(15,16,37,23);
-    DisplayText(1,15,16,String(bmp.readTemperature()-1).substring(0,2)+"C");
+    //looping screens
+    if(max_screen_nr<curr_screen){
+        curr_screen=1;
+        Serial.println("reset");
+    }
+    display1.clearDisplay();
+    if(curr_screen==1)
+      DisplayText(1,15,16,String(bmp.readTemperature()-1).substring(0,2)+"C");
+    ScreenChooser(curr_screen);
     display1.display();
-    delay(500);
-
+    /*Serial.println(buttonValue);
+    if(buttonValue==LOW){
+      pixels.fill(0xFF0000);
+      pixels.show(); 
+    }
+    else{
+      pixels.fill(0x000000);
+      pixels.show();
+    }  //debug for button
+    */
+  }
+  else {
+    pixels.fill(0xFF0000);
+    pixels.show();
+  }
 }
 
 void parseWeather(String jsonString,int ChooseNr, int& ReturnNr, String& ReturnString,double date[]) {
