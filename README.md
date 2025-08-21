@@ -51,5 +51,10 @@ The next step was to link the actual information from the api with the text disp
 
 I did not in fact design the enclosure as I got sucked into making the BME280 work, and so I just added the final piece of the puzzle as far as the homepage is concerned. Hopefully tomorrow I start doing some sketches for the enclosure, along with maybe putting a button to change the current page.
 
+After reworking a bit of the code (mainly making each screen its own separate function and making a chooser function for what screen to display) to accomodate the multiple screen setup, I linked the button and now I have the ability to change the screen. At first I forgot to add debounce to the button and it was impossible to reliably change the screen, however I then added the delay() function. I did quickly realise it was not a great solution, since it was unreliable, if you pressed at the wrong time you could wait double the actual debounce time, and so I opted to use a millis() setup like I used for hitting the api. Here's a photo of the current 2 screens(not impressive but it's getting there):
+<img width="3637" height="2046" alt="screen 1 and  2" src="https://github.com/user-attachments/assets/ab94f750-b49a-4168-9bc9-c0cb25862366" />
+
+
+
 
 
