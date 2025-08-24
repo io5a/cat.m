@@ -80,3 +80,13 @@ Here are the two current screens (not impressive yet, but it’s coming together
 ![Two screens](https://github.com/user-attachments/assets/ab94f750-b49a-4168-9bc9-c0cb25862366)  
 
 I added the cat waving animation, it isn't my best work but it works. It is on a random timer (well pseudo-random but for our purposes random). One thing I would like to maybe improve is not using delay() because it blocks the whole program for about 1 second, however I haven't yet thought of a way to do it. Next up is the second screen, which is going to be how to dress based on the weather. 
+
+
+After getting back from a small vacation I finally had the energy to make the enclosure. At first I was just going to do a thick triangle, but it just didn't sit right with me. So after a few designs, I landed on this:
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/f205d488-7c1d-40d6-9924-637f7a646530" />
+
+In the back, some vents for the heat to rise out from the board, plus a hole for the usb c cable to passthrough to the board. In front, a simple layout, just the screen and the button. One design choice I am really proud of is the mounting of the temperature sensor. I mounted it in the center of the enclosure, outside so the temperatures aren't skewed by the enclosure or the SOC's temps. After 3D printing it, it looks very good in person, and because of a trick I learned (printing a thin sheet of material with all the holes that will make it in the final product so you can test tolerances quickly), everything fit perfectly. Attached is a picture of the 3D printed product (keep in mind this isn't complete since I have yet to print the side panel):
+
+<p align="center">
+  <img width="500" height="563" alt="image" src="https://github.com/user-attachments/assets/204221f2-125c-4734-9590-1013b648e0c1" />
+</p>
