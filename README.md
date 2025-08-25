@@ -90,3 +90,8 @@ In the back, some vents for the heat to rise out from the board, plus a hole for
 <p align="center">
   <img width="500" height="563" alt="image" src="https://github.com/user-attachments/assets/204221f2-125c-4734-9590-1013b648e0c1" />
 </p>
+
+Finally added the hourly temps display, however I hate the way it looks. It's just a wall of text, which you actually need to put effort into understanding, which is not a good thing, however I have no idea how to fit all the temperatures on the display without it looking bad. One idea I have is redoing all the numbers in Photoshop to slim them down, although I don't think it will look that much better. Another idea I am considering is adding an interactive way to select the hour you want to display, but I would love to able to display the full 24 hours.
+![IMG_20250826_002231_555](https://github.com/user-attachments/assets/5f93ff70-bad6-42d6-a639-ef46603534d1)
+
+
