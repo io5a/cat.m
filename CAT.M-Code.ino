@@ -35,7 +35,7 @@ unsigned long debounceDelay = 100;
 int ChooseNr; // the number that signifies what data i want to retrieve
 int MainNr;
 String MainString;
-double MainData[24]; // mix used array for hourly 
+int MainData[24]; // mix used array for hourly 
 
 unsigned long animateTime=0;
 unsigned long animateDelay=random(5000,60000);
@@ -387,7 +387,8 @@ void FirstScreen(){
 }
 
 void SecondScreen(){
-  DisplayText(1,60,30,"Test");
+  parseWeather(weather,23,MainNr,MainString,MainData);
+  DisplayHours(0,0,MainData);
 }
 
 void ScreenChooser(int x){
@@ -441,20 +442,86 @@ void AnimateCat(int x, int y){
     animateDelay=random(5000,60000);
 }
 
+void DisplayHours(int x,int y, int arr[]){
+  int yoffset=10;
+  int ymove=2;
+
+  int xoffset=34; 
+  int xmove=6;
+
+  DisplayText(1,xoffset*0+8,yoffset*0+ymove,String(arr[0])+"C");
+  DisplayText(1,xoffset*0+8,yoffset*1+ymove,String(arr[1])+"C");
+  DisplayText(1,xoffset*0+8,yoffset*2+ymove,String(arr[2])+"C");
+  DisplayText(1,xoffset*0+8,yoffset*3+ymove,String(arr[3])+"C");
+  DisplayText(1,xoffset*0+8,yoffset*4+ymove,String(arr[4])+"C");
+  DisplayText(1,xoffset*0+8,yoffset*5+ymove,String(arr[5])+"C");
+
+  DisplayText(1,xoffset*0,yoffset*0+ymove,"0");
+  DisplayText(1,xoffset*0,yoffset*1+ymove,"1");
+  DisplayText(1,xoffset*0,yoffset*2+ymove,"2");
+  DisplayText(1,xoffset*0,yoffset*3+ymove,"3");
+  DisplayText(1,xoffset*0,yoffset*4+ymove,"4");
+  DisplayText(1,xoffset*0,yoffset*5+ymove,"5");
+  
+  DisplayText(1,xoffset*1+14-xmove,yoffset*0+ymove,String(arr[6])+"C");
+  DisplayText(1,xoffset*1+14-xmove,yoffset*1+ymove,String(arr[7])+"C");
+  DisplayText(1,xoffset*1+14-xmove,yoffset*2+ymove,String(arr[8])+"C");
+  DisplayText(1,xoffset*1+14-xmove,yoffset*3+ymove,String(arr[9])+"C");
+  DisplayText(1,xoffset*1+14-xmove,yoffset*4+ymove,String(arr[10])+"C");
+  DisplayText(1,xoffset*1+14-xmove,yoffset*5+ymove,String(arr[11])+"C");
+
+  DisplayText(1,xoffset*1-xmove,yoffset*0+ymove,"6");
+  DisplayText(1,xoffset*1-xmove,yoffset*1+ymove,"7");
+  DisplayText(1,xoffset*1-xmove,yoffset*2+ymove,"8");
+  DisplayText(1,xoffset*1-xmove,yoffset*3+ymove,"9");
+  DisplayText(1,xoffset*1-xmove,yoffset*4+ymove,"10");
+  DisplayText(1,xoffset*1-xmove,yoffset*5+ymove,"11");
+
+
+  DisplayText(1,xoffset*2+14-xmove,yoffset*0+ymove,String(arr[12])+"C");
+  DisplayText(1,xoffset*2+14-xmove,yoffset*1+ymove,String(arr[13])+"C");
+  DisplayText(1,xoffset*2+14-xmove,yoffset*2+ymove,String(arr[14])+"C");
+  DisplayText(1,xoffset*2+14-xmove,yoffset*3+ymove,String(arr[15])+"C");
+  DisplayText(1,xoffset*2+14-xmove,yoffset*4+ymove,String(arr[16])+"C");
+  DisplayText(1,xoffset*2+14-xmove,yoffset*5+ymove,String(arr[17])+"C");
+
+  DisplayText(1,xoffset*2-xmove,yoffset*0+ymove,"12");
+  DisplayText(1,xoffset*2-xmove,yoffset*1+ymove,"13");
+  DisplayText(1,xoffset*2-xmove,yoffset*2+ymove,"14");
+  DisplayText(1,xoffset*2-xmove,yoffset*3+ymove,"15");
+  DisplayText(1,xoffset*2-xmove,yoffset*4+ymove,"16");
+  DisplayText(1,xoffset*2-xmove,yoffset*5+ymove,"17");
+
+  DisplayText(1,xoffset*3+14-xmove,yoffset*0+ymove,String(arr[18])+"C");
+  DisplayText(1,xoffset*3+14-xmove,yoffset*1+ymove,String(arr[19])+"C");
+  DisplayText(1,xoffset*3+14-xmove,yoffset*2+ymove,String(arr[20])+"C");
+  DisplayText(1,xoffset*3+14-xmove,yoffset*3+ymove,String(arr[21])+"C");
+  DisplayText(1,xoffset*3+14-xmove,yoffset*4+ymove,String(arr[22])+"C");
+  DisplayText(1,xoffset*3+14-xmove,yoffset*5+ymove,String(arr[23])+"C");
+
+  DisplayText(1,xoffset*3-xmove,yoffset*0+ymove,"18");
+  DisplayText(1,xoffset*3-xmove,yoffset*1+ymove,"19");
+  DisplayText(1,xoffset*3-xmove,yoffset*2+ymove,"20");
+  DisplayText(1,xoffset*3-xmove,yoffset*3+ymove,"21");
+  DisplayText(1,xoffset*3-xmove,yoffset*4+ymove,"22");
+  DisplayText(1,xoffset*3-xmove,yoffset*5+ymove,"23");
+}
+
+
 void setup(){
-/*
+  /*
   #if defined(NEOPIXEL_POWER)
     pinMode(NEOPIXEL_POWER, OUTPUT);
     digitalWrite(NEOPIXEL_POWER, HIGH);
   #endif
-  pixels.begin(); 
-  pixels.setBrightness(20);
-*/
+  pixels.begin();
+  pixels.setBrightness(20); 
+  */
   // START CONNECT WIFI
     Serial.begin(115200);
     delay(1000);
 
-    WiFi.mode(WIFI_STA); 
+    WiFi.mode(WIFI_STA);
     WiFi.begin(ssid, password);
     //WiFi.begin(ssid);
     Serial.println("\nConnecting");
@@ -543,10 +610,13 @@ void loop() {
         animateTime=millis();
       }
     }
-    
+
+
 
 
     // THIS IS THE LAST IN THE LOOP
+
+
     display1.display();
     /*Serial.println(buttonValue);
     if(buttonValue==LOW){
@@ -565,7 +635,7 @@ void loop() {
   }
 }
 
-void parseWeather(String jsonString,int ChooseNr, int& ReturnNr, String& ReturnString,double date[]) {
+void parseWeather(String jsonString,int ChooseNr, int& ReturnNr, String& ReturnString,int date[]) {
   JSONVar root = JSON.parse(jsonString);
 
   if (JSON.typeof(root) == "undefined") {
@@ -616,7 +686,7 @@ void parseWeather(String jsonString,int ChooseNr, int& ReturnNr, String& ReturnS
       if(ChooseNr%10==2){
         //array temp
         for(int i=0;i<=23;i++){
-          date[i]=double(root["hourly"]["temperature_2m"][i]);
+          date[i]=int(root["hourly"]["temperature_2m"][i]);
         }
         return;
       }
