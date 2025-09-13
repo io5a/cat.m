@@ -98,3 +98,9 @@ Decided on a middle of the road approach, displaying 12 hours in the future, max
 ![IMG_20250826_205658_148](https://github.com/user-attachments/assets/0af7472a-0577-40c8-b013-5324415ea296)
 
 After painting the housing, I finally worked the courage to put everyhing in an hot glue it in place. The hole for the display was slightly too small, and so I got a file and started expanding the hole, trying to see if the display fit. At one point, by forcing it too much, I broke a bit of glass, which i thought was not that important. I decided to do a test to see if the display still worked after that, just so I dont have to take it out of the super glue. Little did I know, the display was not fine at all. It started smoking instantly and a bright orange light started coming out of one of the traces. So until I get a display from either ordering one or asking a friend, I cannot move forward with this project. ETA for coming back is about 1-2 days depending on which option I choose.
+
+It took significantly longer than 1-2 days because I decided to order from Aliexpress. It was however worth it due to the fact that this time i could get a display that was just one color, not that weird yellow and blue combination. After testing the new display, I started assembling everything. The reason for this is that for the hardware functionality the project is done, and so there is no reason to keep a rat's nests of cables on my desk. Assembly went smooth, only inversing the SDA and SCL cables for my sensor, however I quickly discovered and fixed this error. Below you will find some photos of the final look (I also used the built in led to get a cool cyan backlight).
+
+<img width="1920" height="1080" alt="Collage" src="https://github.com/user-attachments/assets/a909c581-86af-4818-a74d-a6a04a7434ef" />
+
+Next up, finishing up the software, aka adding the AC functionality and the clothing one.
