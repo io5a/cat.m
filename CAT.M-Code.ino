@@ -547,14 +547,15 @@ void DisplayHours(int x,int y, int arr[],String hour){
 
 
 void setup(){
-  /*
-  #if defined(NEOPIXEL_POWER)
-    pinMode(NEOPIXEL_POWER, OUTPUT);
-    digitalWrite(NEOPIXEL_POWER, HIGH);
-  #endif
+  
+
+  pinMode(NEOPIXEL_POWER, OUTPUT);
+  digitalWrite(NEOPIXEL_POWER, HIGH);
   pixels.begin();
-  pixels.setBrightness(20); 
-  */
+  pixels.setBrightness(255); 
+  pixels.fill(0x00FFFF);
+  pixels.show();
+  
   // START CONNECT WIFI
     Serial.begin(115200);
     delay(1000);
@@ -649,22 +650,11 @@ void loop() {
       }
     }
 
-
-
-
     // THIS IS THE LAST IN THE LOOP
 
     display1.display();
-    /*Serial.println(buttonValue);
-    if(buttonValue==LOW){
-      pixels.fill(0xFF0000);
-      pixels.show(); 
-    }
-    else{
-      pixels.fill(0x000000);
-      pixels.show();
-    }  //debug for button
-    */
+    
+    
   }
   else {
     pixels.fill(0xFF0000);
